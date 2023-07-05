@@ -1,0 +1,685 @@
+﻿@using AksDemoApp.Models.Products;
+@model ProductViewModel;
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<html>
+    <input type="hidden" id="current-url" value="@Url.Action("Products", "Product")" />
+<form id="add-product-form" enctype="multipart/form-data">
+    <div id="wrap">
+        <div class="clear" style="height:5px;"></div>
+        <div id="wrap2">
+            <h1>Add Product</h1>
+            <br>
+            <div class="form-raw">
+                <div class="form-name">Select Category</div>
+               <div class="form-txtfld">
+                <select id="category-select" class="form-control" name="Category"  asp-items=" ViewBag.Category">
+                  <option value="">-- Select a Category --</option>
+               </select>
+               </div>
+            </div>
+            <div class="clear"></div>
+    <div class="form-raw">
+      <div class="form-name">Select Sub Category</div>
+      <div class="form-txtfld">
+                    <select id="subcategory-select" class="form-control" name="Subcategory" multiple>
+            <option value="">-- Select a Subcategory --</option>
+        </select>
+      </div>
+    </div>
+      <div class="clear"></div>
+     <div class="form-raw">
+       <div class="form-name">Product Name</div>
+        <div class="form-txtfld">
+        <input type="text" id="name-input" class="form-control" name="Name" >
+        <input type="hidden" id="id-input" asp-for="Id" class="form-control" name="Name" >
+        </div>
+     </div>
+     <div class="form-raw">
+     <div class="form-name">Product Image1</div>
+        <div class="form-txtfld">
+          <input asp-for="PhotoPath" id="image-input" class="form-control-file" accept="image/jpeg, image/png, image/gif"  name="Image">
+          </div>
+          </div>
+          <div class="form-raw">
+       <div class="form-name"></div><div class="form-txtfld"><img src="" hidden id="image-input-box" style="width: 100px; height:100px;" /></div>
+        <div class="form-name"  id="imgDiv"> Image Size ( Width=560px, Height=390px ) (Product page)</div>
+          </div>
+          </div>
+          
+  
+    
+      <div class="form-raw" style="width:100%;">
+        <div class="form-name">Short Description</div>
+          <div class="form-txtfld">
+            <textarea id="short-description-input" class="form-control" name="ShortDescription"></textarea>
+         </div>
+       </div>
+     <div class="clear"></div>
+        <h1 style="border-bottom: 1px solid #CCC; padding-bottom: 10px; margin: 20px 0 0px 0;">Description</h1>
+    <br>  
+    
+        <div id="full-description-container">
+            <div class="full-description-section">
+                <div class="form-raw">
+                <div class="form-name"> &nbsp;</div>
+              <div class="form-txtfld">  
+                 <input type="text" name="FullDescriptionTitles[]" id="FullDescriptionTitle" placeholder="Title">
+               </div>
+               <div class="form-raw">
+               <div class="form-name">&nbsp;</div>
+                        <div class="form-txtfld txtfld50">
+                            <input type="text"  name="FullDescriptionHeadings[]" id="FullDescriptionHeadings" placeholder="Heading">
+                            </div>
+                            <div class="form-txtfld txtfld50">  
+                              <input type="text" name="FullDescriptionDescriptions[]" id="FullDescriptionDescriptions" placeholder="Description" />
+                              </div>
+                              <a class="btn btn-lg delete-section-btn"><i class="bi bi-trash3-fill"></i></a>
+                          </div>
+                     </div>
+                 </div>
+                </div>
+            <div class="form-raw">
+                <div class="form-name">&nbsp;</div>
+                <div class="form-txtfld" style="width: 320px; text-align: right;">
+                <button type="button" id="add-section-btn" class="btn btn-sm btn-secondary mt-2">Add More+</button>
+                </div>
+            </div>
+    </div>
+        <div class="clear"></div>
+        <h1 style="border-bottom: 1px solid #CCC; padding-bottom: 10px; margin: 20px 0 0px 0;">Features</h1>
+        <br>
+        <div class="form-raw" style="width:100%;">
+            <div class="form-name">Content</div>
+            <div class="form-txtfld" style="width:780px;">
+        <textarea id="features-input" class="form-control" name="Features"></textarea>
+            </div>
+    </div>
+        <div class="clear"></div>
+        <h1 style="border-bottom: 1px solid #CCC; padding-bottom: 10px; margin: 20px 0 0px 0;">Upload PDF</h1>
+        <br>
+        <div id="full-pdf-container">
+        <div id="pdf-file-section" class="pdf-section">
+        <div class="form-raw">
+                    <div class="form-name">&nbsp;</div>
+                    <div class="form-txtfld txtfld50"><input type="text" name="PdfHeading[]" id="pdf-heading-input" placeholder="Pdfheading"></div>
+                     <div class="form-txtfld txtfld50">
+                    <input type="file" id="pdf-file-input" accept="application/pdf" name="PdfFile">
+                     </div>
+                    <a class="btn btn-lg delete-pdfsection-btn" ><i class="bi bi-trash3-fill"></i></a>
+            </div>
+         </div>
+        </div>
+        <div class="form-raw">
+            <div class="form-name">&nbsp;</div>
+            <div class="form-txtfld" style="width: 320px; text-align: right;">
+            <button type="button" id="pdf-file-btn" class="btn btn-sm btn-secondary mt-2">Add More+</button>
+        </div>
+        </div>
+
+
+    <div class="clear"></div>
+    <div class="form-raw">
+        <div class="form-name">Active</div>
+        <div class="form-txtfld">
+            <input type="checkbox" asp-for="Status" id="Status" name="Status">
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+  <div class="form-raw">
+    <div class="form-name">&nbsp;</div>
+    <div class="form-txtfld">
+            <button type="button" class="btn btn-primary btn-lg" id="submit-form-btn" style="float:right;" onclick="AddProduct()">Submit</button>
+            <button type="button" hidden class="btn btn-warning btn-lg" id="update-form-btn" style="float:right;" onclick="UpdateProduct()">Update</button>
+                   
+</div>
+</div>
+
+</form>
+
+<button id="reload-btn">Reload Page</button>
+<div class="clear">&nbsp;</div>
+<div id="wrap2">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="admintable">
+        <tr>
+            <th width="53" align="left" valign="middle">SR No.</th>
+            <th width="153" align="left" valign="middle">Category</th>
+            <th width="71" align="left" valign="middle"> Sub Category</th>
+            <th width="71" align="left" valign="middle"> Product Name</th>
+
+            <th width="408" align="left" valign="middle">Short Description</th>
+            <th width="49" align="left" valign="middle">Full Description</th>
+            <th width="49" align="left" valign="middle">Status</th>
+
+            <th width="49" align="left" valign="middle">Edit</th>
+            <th width="61" align="left" valign="middle">Remove</th>
+        </tr>
+        <tbody id="ListData"></tbody>
+    </table>
+    <div class="clear">&nbsp;</div>
+</div>
+<div class="clear"></div>
+</html>
+<script>
+    
+     
+    //CK editor for feature 
+    $(document).ready(function () {
+         
+        ClassicEditor
+            .create(document.querySelector('#features-input'))
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+
+    // Add more section for full description
+    $(document).ready(function () {
+         
+        // Add section
+        $('#add-section-btn').click(function () {
+            $('#full-description-container').append(`<div class="full-description-section">
+                    <div class="form-raw">
+                    <div class="form-name"> &nbsp;</div>
+                  <div class="form-txtfld">
+                     <input type="text" name="FullDescriptionTitles[]" id="FullDescriptionTitle" placeholder="Title">
+                   </div>
+                   <div class="form-raw">
+                   <div class="form-name">&nbsp;</div>
+                            <div class="form-txtfld txtfld50">
+                                <input type="text"  name="FullDescriptionHeadings[]" id="FullDescriptionHeadings" placeholder="Heading">
+                                </div>
+                                <div class="form-txtfld txtfld50">
+                                  <input type="text"  name="FullDescriptionDescriptions[]" id="FullDescriptionDescriptions" placeholder="Description" />
+                                  </div>
+                                  <a class="btn btn-lg  delete-section-btn"><i class="bi bi-trash3-fill"></i></a>
+                              </div>
+                         </div>
+                     </div>`);
+        });
+
+        // Remove section
+        $('#full-description-container').on('click', '.delete-section-btn', function () {
+            $(this).closest('.full-description-section').remove();
+        });
+    });
+
+    $(document).ready(function () {
+        // Add section
+        $('#pdf-file-btn').click(function () {
+        $('#full-pdf-container').append(`<div id="pdf-file-section" class="pdf-section">
+        <div class="form-raw">
+                    <div class="form-name">&nbsp;</div>
+                    <div class="form-txtfld txtfld50"><input type="text" name="PdfHeading[]" id="pdf-heading-input" placeholder="Pdfheading"></div>
+                     <div class="form-txtfld txtfld50">
+                    <input type="file" id="pdf-file-input" accept="application/pdf" name="PdfFile">
+                    <input type="text" disabled name="UploadedFile" class="uploadedFiles" hidden>
+                     </div>
+                    <a class="btn btn-lg delete-pdfsection-btn" ><i class="bi bi-trash3-fill"></i></a>
+            </div>
+         </div>`);
+        });
+
+        // Remove section
+
+        $('#full-pdf-container').on('click', '.delete-pdfsection-btn', function () {
+            $(this).closest('#pdf-file-section').remove();
+        });
+    });
+
+   
+
+
+
+// fetch subcategory with respect to category
+    $(document).ready(function () {
+        console.log("document is ready");
+        $('#category-select').change(function () {
+            var cat = $("#category-select").val();
+            var scat = $("#subcategory-select");
+            var baseUrl = window.location.origin;
+            var settings = {
+                "url": baseUrl + "/Product/FetchsubCat/" + cat,
+                "method": "POST",
+                "timeout": 0
+
+            };
+
+            $.ajax(settings).done(function (response) {
+                if (response != null && !jQuery.isEmptyObject(response)) {
+                    scat.empty();
+                    scat.append($('<option/>', {
+                        value: null,
+                        text: "Select Sub Category"
+                    }));
+
+                    $.each(response, function (i, res) {
+
+                        scat.append($('<option/>', {
+                            value: res.value,
+                            text: res.text
+
+                        }));
+                      
+                    });
+                };
+            });
+        });
+    });
+
+
+    // for Delete Button
+
+    function btnDelete(id) {
+        $.ajax({
+            url: '/Product/DeleteProduct?id=' + id,
+            success: function () {
+                alert('Record Deleted !');
+                ResetForm();
+                GetData();
+            },
+            error: function () {
+                alert("Data Can't Be Deleted");
+            }
+        })
+    }
+    $(document).ready(function () {
+        $('#image-input').on("change", function () {
+
+            var filename = $(this).val().split("\\").pop();
+
+
+        });
+    });
+
+     $(document).ready(function () {
+        $('#pdf-file-input').on("change", function () {
+                
+                var filename = $(this).val().split("\\").pop();
+        });
+     });
+    
+    function fetchSubCategory(id) {
+        var scat = $("#subcategory-select");
+        $.ajax({
+
+            url: '/Product/SubCategories?id=' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+
+               if (response != null && !jQuery.isEmptyObject(response)) {
+                    scat.empty();
+                    scat.append($('<option/>', 
+                    {
+                        value: null,
+                        text: "Select Sub Category"
+                    }));
+                    $.each(response, function (i, res) {
+
+                        scat.append($('<option/>', {
+                            value: res.value,
+                            text: res.text
+
+                        }));
+                    });
+                }
+            }
+            })
+    };    
+
+     function UpdateProduct() {
+           
+        // Create a new FormData object
+        var formData = new FormData();
+        var id= $('#id-input').val();
+        var category = $('#category-select').val();
+        var subcategory=$('#subcategory-select').val();
+        var productname = $('#name-input').val();
+        var shortdescription = $('#short-description-input').val();
+        var imginput = $('#image-input')[0];
+        var Pdfinput = $('#pdf-file-input')[0];
+        var status=$('#Status').val();
+        //var feature = $('#features-input').val();
+        var fullDescriptionData = [];
+        var featuresContent = window.editor.getData();
+        $(".full-description-section").each(function () {
+            var sectionData = {
+                title: $(this).find("input[name='FullDescriptionTitles[]']").val(),
+                heading: $(this).find("input[name='FullDescriptionHeadings[]']").val(),
+                description: $(this).find("input[name='FullDescriptionDescriptions[]']").val(),
+            };
+
+            fullDescriptionData.push(sectionData);
+            });
+     
+         var pdfHeadings = [];
+        $(".pdf-section").each(function () {
+            var pdfData = {
+                heading: $(this).find("input[name='PdfHeading[]']").val(),
+               // file: $(this).find("input[name='PdfFile']").val(),
+            };
+            pdfHeadings.push(pdfData);
+        });
+        
+        var pdfFiles = [];
+        $("input[name='PdfFile']").each(function (index, input) {
+            pdfFiles.push(input.files[0]);
+        });
+        pdfFiles.forEach(function (file, index) {
+            formData.append('PdfPath', file);
+        });
+
+        formData.append('PdfHeading', JSON.stringify(pdfHeadings));
+
+        // update full description data to form data
+              formData.append('PhotoPath', imginput.files[0]);
+               formData.append('Category', category);
+               formData.append('Id', id);
+               formData.append('SubCategory', subcategory);
+               formData.append('ProductName', productname);
+               formData.append('ShortDescription', shortdescription);
+                formData.append('FullDescription', JSON.stringify(fullDescriptionData));
+                formData.append("Features", featuresContent);
+                formData.append('Status', status);
+                 formData.append('PdfPath', pdfFiles);
+        
+
+                $.ajax({
+                    url: '/Product/UpdateProduct',
+                    type: 'POST',
+                    data: formData,
+                    timeout: 0,
+                    processData:false,
+                    contentType:false,
+                   
+                    success: function (response) {
+                    console.log("Updated Response"+response);
+
+                      alert("Record Updated!");
+                         reload();
+                     $('#submit-form-btn').css('display', 'block');
+                     $('#update-form-btn').css('display', 'none');
+                    
+                    },
+                    error: function () {
+                        alert("Error Submitting data");
+                        ResetForm();     
+                    }
+                });
+            
+    }
+
+
+
+    // Get data from table
+
+    function GetData(){
+           var html='';
+           $.ajax({
+               
+               url:'/Product/GetAllProducts',
+                type: 'GET',
+                dataType:'json',
+                timeout:0,
+               success:function(response){
+                  var sr=1;
+                   $.each(response, function(key,item){
+                    let fullDescriptionObj = JSON.parse(item.fullDescription);
+
+                    // Format the fullDescription data into a readable string
+                    let fullDescriptionStr = '';
+                    try 
+                    {
+                        let fullDescriptionObj = JSON.parse(item.fullDescription);
+                        $.each(fullDescriptionObj, function (key, val) {
+                            fullDescriptionStr += '<div>' + val.title + ':' + val.heading + ' - ' + val.description + '</div>';
+                        });
+                    }
+                    catch (error) {
+                        console.error('Error parsing fullDescription for item', item.id, error);
+                        fullDescriptionStr = item.fullDescription; // display original string if parsing fails
+                    }
+                    html += '<tr><td>' + sr + '</td><td>' + item.categoryname + '</td><td>' + item.subCategory + '</td><td>' + item.productName + '</td><td>' + item.shortDescription + '</td><td>' + fullDescriptionStr + '</td><td>' + item.status + '</td><td><a class="btn btn-lg" onClick="btnEdit(' + item.id + ')" ><i class="bi bi-pencil-square"></i></a></td><td><a class="btn btn-lg" onClick="btnDelete(' + item.id + ')"  > <i class="bi bi-archive-fill"></i></a></td></tr>'
+                   sr++;
+                });
+                   $('#ListData').empty();
+                   $("#ListData").append(html);
+               }
+           });   
+       }
+
+
+       setInterval(GetData,1000);
+       GetData();
+
+    function AddProduct() {
+        
+
+        var formData = new FormData();
+        var category = $('#category-select').val();
+        
+        var subcategory = $('#subcategory-select').val();
+        var productname = $('#name-input').val();
+        var shortdescription = $('#short-description-input').val();
+        var imginput = $('#image-input')[0];
+        var Pdfinput = $('#pdf-file-input')[0];
+        var status = $('#Status').val();
+        var fullDescriptionData = [];
+        var featuresContent = window.editor.getData();
+        $(".full-description-section").each(function () {
+            var sectionData = {
+                title: $(this).find("input[name='FullDescriptionTitles[]']").val(),
+                heading: $(this).find("input[name='FullDescriptionHeadings[]']").val(),
+                description: $(this).find("input[name='FullDescriptionDescriptions[]']").val(),
+            };
+
+            fullDescriptionData.push(sectionData);
+        });
+        
+        var pdfHeadings = [];
+        $(".pdf-section").each(function () {
+            var pdfData = {
+                heading: $(this).find("input[name='PdfHeading[]']").val(),
+                file: $(this).find("input[name='PdfFile']").val(),
+            };
+            pdfHeadings.push(pdfData);
+        });
+        
+        var pdfFiles = [];
+        $("input[name='PdfFile']").each(function (index, input) {
+            pdfFiles.push(input.files[0]);
+        });
+        pdfFiles.forEach(function (file, index) {
+            formData.append('PdfPath', file);
+        });
+
+        formData.append('PdfHeading', JSON.stringify(pdfHeadings));
+        formData.append('PhotoPath', imginput.files[0]);
+        formData.append('Category', category);
+        formData.append('SubCategory', subcategory);
+        formData.append('ProductName', productname);
+        formData.append('ShortDescription', shortdescription);
+        formData.append('FullDescription', JSON.stringify(fullDescriptionData));
+        formData.append("Features", featuresContent);
+        formData.append('Status', status);
+        formData.append('PdfPath', pdfFiles);
+        // Submit the form data to the server
+        console.log(formData);
+        $.ajax({
+            url: '/Product/AddProduct',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if(response.success==true)
+                {
+                 ResetForm();
+                alert("Data Submitted!");
+                }
+                else{
+                    alert("Error Submiting Data!");
+                }
+                console.log(response);
+            },
+            error: function () {
+               
+                alert("Error Submiting Data!")
+            }
+        });
+        
+    }
+
+    function ResetForm()
+    {
+        document.getElementById("add-product-form").reset();
+        window.editor.setData('');
+        $("#Status").attr("checked", false);
+        //var optionElement += '<option value="''">Select Sub Category</option>';
+        document.getElementById("subcategory-select").innerHTML="<option value=''>-- Select a Subcategory --</option>";
+        $('#image-input-box').css('display','none');
+        $('#image-input-box').attr('src','');
+        $('.uploadedFiles').css('display','none');
+        $('.uploadedFiles').val('');
+       
+        var elementbtn = document.getElementsByClassName('full-description-section');
+
+     // loop through the elements and hide them
+        for (var i = 1; i < elementbtn.length; i++) {
+           
+            elementbtn[i].style.display = 'none';
+             }
+
+
+        
+        var elementpdfbtn = document.getElementsByClassName('pdf-section');
+
+
+     // loop through the elements and hide them
+        for (var i = 1; i < elementpdfbtn.length; i++) {
+           
+            elementpdfbtn[i].style.display = 'none';
+             }
+
+   
+    }
+</script>
+
+
+
+
+<script>
+    // for edit button
+    function btnEdit(id) {
+       
+
+        $.ajax({
+
+            url: '/Product/EditProduct?id=' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+
+                $('#category-select').val(response.category);
+
+                $('#id-input').val(response.id);
+                $('#name-input').val(response.productName);
+                $('#short-description-input').val(response.shortDescription);
+                $('#image-input-box').removeAttr('hidden');
+                $('#image-input-box').attr('src', '/images/' + response.photoPath);
+                $('#submit-form-btn').css('display', 'none');
+                $('#update-form-btn').removeAttr('hidden');
+                $('#update-form-btn').css('display', 'block');
+                $('#imgDiv').css('display', 'none');
+                //fetchSubCategory(response.category);
+                var id = response.category;
+                var items = response.subCategory;
+                var arrayItems = items.split(",");
+
+                if (response.subCategory) {
+                    var scat = $("#subcategory-select");
+                    $.ajax({
+                        url: '/Product/SubCategories?id=' + id,
+                        type: 'GET',
+                        contentType: 'application/json;charset=utf-8',
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response != null && !jQuery.isEmptyObject(response)) {
+                                scat.empty();
+                                scat.append($('<option/>', {
+
+                                    value: null,
+                                    text: "Select Sub Category"
+                                }));
+                                $.each(response, function (i, res) {
+                                   if (arrayItems.includes(res.value)) {
+                                        scat.append($('<option selected>', {
+                                            value: res.value,
+                                            text: res.text
+                                        }))
+                                        
+                                    }
+                                    else {
+                                        scat.append($('<option/>', {
+                                            value: res.value,
+                                            text: res.text
+                                        }));
+                                    }
+                                })
+                            }
+                        }
+                    })
+
+
+                }
+
+                window.editor.setData(response.features);
+                if (response.status == "Active") {
+                    $("#Status").attr("checked", true);
+                }
+                else {
+                    $('#Status').attr("checked", false);
+                }
+                if (response.fullDescription) {
+                    const fullDescriptionArr = JSON.parse(response.fullDescription);
+                    $.each(fullDescriptionArr, function (index, sectionData) {
+                        if (index > 0) {
+                           $('#add-section-btn').trigger('click');
+                        }
+                        $('.full-description-section').eq(index).find("input[name='FullDescriptionTitles[]']").val(sectionData.title);
+                        $('.full-description-section').eq(index).find("input[name='FullDescriptionHeadings[]']").val(sectionData.heading);
+                        $('.full-description-section').eq(index).find("input[name='FullDescriptionDescriptions[]']").val(sectionData.description);
+                       
+                    });
+                }
+
+                if (response.pdfHeading) {
+
+                    const fullpdfArr = JSON.parse(response.pdfHeading);
+                    $.each(fullpdfArr, function (index, pdfData) {
+                        if (index > 0) {
+                            $('#pdf-file-btn').trigger('click');
+                        }
+
+                        $('.pdf-section').eq(index).find("input[name='PdfHeading[]']").val(pdfData.heading)
+                    });
+
+                }
+               
+            },
+            error: function () {
+                alert("data not found");
+            }
+        })
+    }
+
+</script>
+

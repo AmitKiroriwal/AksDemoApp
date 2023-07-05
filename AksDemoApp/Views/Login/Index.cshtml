@@ -1,0 +1,64 @@
+﻿@model Admin;
+@{
+    Layout = "_MyLayout";
+}
+<body>
+    <header>
+        <div id="wrap">
+            <div class="logo"><img src="~/images/logo.png" border="0"></div>
+
+            <div class="admintxt">Admin panel</div>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+   </header>
+  <div class="clear"></div>
+    <div class="bodycont">
+        
+        <div id="wrap2" style="min-height:530px;">
+            <div class="login-cont">
+                <h1 class="loginhd">Login Here</h1>
+               <form asp-action="Index" asp-controller="Login" method="post">
+                <div class="login-row">
+                        <div class="loginname"><i class="bi bi-person"></i></div>
+                    <div class="admintxtfld-box">
+                            <input asp-for="Name" type="text" name="Name">
+                            <span asp-validation-for="Name"></span>
+                    </div>
+
+                    <div class="clear"></div>
+                </div>
+                <div class="login-row">
+                        <div class="loginname"><i class="bi bi-lock"></i></div>
+                    <div class="admintxtfld-box">
+                            <input asp-for="Password" type="password" name="password">
+                        <span asp-validation-for="Password"></span>
+                    </div>
+
+                    <div class="clear"></div>
+                </div>
+
+                <div class="clear"></div>
+                <div class="contact-row" style="width:325px;">
+                    <div style="background:none; border:none; margin-top:15px;">
+                        <a href="admin.html" style="text-decoration:none;">
+                            <input type="submit" class="btn" value="Login">
+                        </a>
+                        <br>
+                    </div>
+                </div>
+                    <span>@ViewBag.Msg</span>
+             </form>     <div class="clear"></div>
+            </div>
+            
+            <div class="clear"></div>
+        </div>
+       
+        <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+    
+       
+    
+</body>
+

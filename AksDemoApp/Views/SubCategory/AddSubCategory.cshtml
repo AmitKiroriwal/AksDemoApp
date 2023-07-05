@@ -1,0 +1,248 @@
+﻿@using AksDemoApp.Models.SubCategory;
+@model SubCategories;
+<div id="wrap">
+    <div class="clear" style="height:5px;"></div>
+    <form id="myForm">
+    <div id="wrap2">
+        <h1>Add Sub Category</h1>
+        <br>
+
+        <div class="form-raw">
+            <div class="form-name">Select Category</div>
+            <div class="form-txtfld">
+                <select asp-for="CategoryId" name="CategoryId" asp-items="ViewBag.Category" id="CId">
+                    <option value="">Select Option</option>
+                    
+                </select>
+            </div>
+        </div>
+        <div class="clear"></div>
+
+        <div class="form-raw">
+            <div class="form-name">Add Sub Category</div>
+            <div class="form-txtfld">
+                <input type="text" asp-for="SubCategoryName" name="SubCategoryName" id="Name">
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+    <div class="form-raw">
+        <div class="form-name">Active</div>
+        <div class="form-txtfld">
+            <input type="checkbox" asp-for="SubCategoryStatus" name="SubCategoryStatus" id="Status">
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="form-raw">
+        <div class="form-name">&nbsp;</div>
+        <div class="form-txtfld" style="width:290px;">
+            <input type="submit" class="btn" value="Submit" id="btnAdd">
+        </div>
+    </div>
+    </form>
+</div>
+
+<div class="clear">&nbsp;</div>
+
+<div id="wrap3">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="admintable">
+        <tr>
+            <th width="59" align="left" valign="middle">Sr.No.</th>
+            <th width="752" align="left" valign="middle">Category</th>
+            <th width="752" align="left" valign="middle">Sub Category</th>
+            <th width="77" align="left" valign="middle">Status</th>
+            <th width="54" align="left" valign="middle">Edit</th>
+            <th width="71" align="left" valign="middle">Remove</th>
+        </tr>
+        <tbody id="ListData">
+
+        </tbody>
+    </table>
+    <div class="clear">&nbsp;</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade mt-5" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Edit Record</h5>
+                <button type="button" onclick="HideModalPopUp()" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="EditForm">
+
+                <div class="modal-body">
+                    <div id="wrap2">
+                        <div class="form-raw">
+                            <div class="form-txtfld">
+                                <input type="hidden" asp-for=SubCategoryId name="SubCategoryId" id="MId" >
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <div class="form-raw">
+                        <div class="form-name">Select Category</div>
+                        <div class="form-txtfld">
+                            <select asp-for="CategoryId" name="CategoryId" asp-items="ViewBag.Category" id="MCId" >
+                                
+
+                            </select>
+                        </div>
+                    </div>
+                    <div id="wrap2">
+                        <div class="form-raw">
+                            <div class="form-name">SubCategory Name</div>
+                            <div class="form-txtfld">
+                                <input type="text" asp-for=SubCategoryName name="SubCategoryName" id="MName">
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="form-raw">
+                        <div class="form-name">Active</div>
+                        <div class="form-txtfld">
+                            <input type="checkbox" asp-for=SubCategoryStatus name="SubCategoryStatus"  id="MStatus">
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning" onclick="UpdateCategory()">Update</button>
+                    <button type="button" onclick="HideModalPopUp()" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        GetData();
+        $('#myForm').submit(function (event) {
+
+            event.preventDefault();
+            $.ajax({
+                url: '/SubCategory/AddSubCategory',
+                type: 'POST',
+                data: $(this).serialize(),
+                timeout: 0,
+                success: function (response) {
+                    ClearTextBox();
+                    GetData();
+                    alert("Record Saved Successfully!");
+                },
+                error: function () {
+                    alert("Error Submitting data!");
+                }
+            });
+        });
+
+
+
+
+
+    });
+    function btnEdit(id) {
+        $.ajax({
+
+            url: '/SubCategory/EditCategory?id=' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                $('#exampleModalCenter').modal('show');
+                $('#MId').val(response.subCategoryId);
+                $('#MCId').val(response.categoryId);
+                $('#MName').val(response.subCategoryName);
+                //$('#MStatus').val(response.subCategoryStatus);
+                if (response.subCategoryStatus == "Active") {
+                    $("#MStatus").attr("checked", true);
+                }
+                else {
+                    $('#MStatus').attr("checked", false);
+                }
+            }
+        })
+    }
+
+    function btnDelete(id) {
+        $.ajax({
+            url: '/SubCategory/DeleteCategory?id=' + id,
+            success: function () {
+                alert('Record Deleted !');
+                GetData();
+            },
+            error: function () {
+                alert("Data Can't Be Deleted");
+                GetData();
+            }
+        })
+    }
+
+
+    function UpdateCategory() {
+        $('#EditForm').submit(function (event) {
+
+            event.preventDefault();
+            $.ajax({
+                url: '/SubCategory/UpdateCategory',
+                type: 'POST',
+                data: $(this).serialize(),
+                timeout: 0,
+                success: function (response) {
+                    alert("Record Updated !");
+                    ClearTextBox();
+                    GetData();
+                    HideModalPopUp();
+
+                },
+                error: function () {
+                    console.log("Error Submitting data");
+                    ClearTextBox();
+                    GetData();
+                    HideModalPopUp();
+                }
+            });
+        });
+    }
+    function GetData() {
+        var html = '';
+        $.ajax({
+
+            url: '/SubCategory/GetAllSubCategory',
+            type: 'GET',
+            dataType: 'json',
+            timeout: 0,
+            success: function (response) {
+               var sr=1;
+                $.each(response, function (key, item) {
+                    html += '<tr><td>' + sr + '</td><td>' + item.categoryName + '</td><td>' + item.subCategoryName + '</td><td>' + item.subCategoryStatus + '</td><td><a class="btn btn-lg" onClick="btnEdit(' + item.subCategoryId + ')" ><i class="bi bi-pencil-square"></i></a></td><td><a class="btn btn-lg" onClick="btnDelete(' + item.subCategoryId + ')" ><i class="bi bi-archive"></i></a></td></tr>'
+                sr++;
+                });
+                $('#ListData').empty();
+                $("#ListData").append(html);
+            }
+        });
+    }
+
+    function ClearTextBox() {
+        document.getElementById("myForm").reset();
+        document.getElementById("EditForm").reset();
+    }
+    function HideModalPopUp() {
+        $('#exampleModalCenter').modal('hide');
+    }
+</script>
+

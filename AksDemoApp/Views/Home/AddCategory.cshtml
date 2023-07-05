@@ -1,0 +1,258 @@
+﻿@using AksDemoApp.Models.Category;
+@model Categories;
+
+<div id="wrap">
+    <div class="clear" style="height:5px;"></div>
+    <form id="myForm">
+    <div id="wrap2">
+        <h1>Add Category</h1>
+        <br>
+        <div class="form-raw">
+            <div class="form-name">Category Name</div>
+            <div class="form-txtfld">
+                <input type="text" asp-for=CategoryName name="CategoryName" id="Name">
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+    <div class="form-raw">
+        <div class="form-name">Active</div>
+        <div class="form-txtfld">
+            <input type="checkbox" asp-for=CategoryStatus  name="CategoryStatus" id="Status">
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="form-raw">
+        <div class="form-name">&nbsp;</div>
+        <div class="form-txtfld" style="width:290px;">
+            <input type="submit" class="btn" value="Submit" name="submit" id="btnAdd">
+        </div>
+    </div>
+    </form>
+</div>
+
+<div class="clear">&nbsp;</div>
+<div id="wrap3">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="admintable" id="tblcategory">
+        <thead>
+        <tr>
+            <th width="59" align="left" valign="middle">Sr.No.</th>
+            <th width="752" align="left" valign="middle">Category Name</th>
+            <th width="77" align="left" valign="middle">Status</th>
+            <th width="54" align="left" valign="middle">Edit</th>
+            <th width="71" align="left" valign="middle">Remove</th>
+        </tr>
+        </thead>
+        <tbody id="ListData">
+
+        </tbody>
+       
+    </table>
+    <div class="clear">&nbsp;</div>
+</div>
+<div class="clear"></div>
+
+<!-- Modal -->
+<div class="modal fade mt-5" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"  role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Edit Category Record</h5>
+                <button type="button" onclick="HideModalPopUp()" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="EditForm">
+
+            <div class="modal-body">
+                                    <div id="wrap2">
+                        <div class="form-raw">
+                            <div class="form-txtfld">
+                                <input type="hidden" name="CategoryId" asp-for=CategoryId id="MId">
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div id="wrap2">
+                        <div class="form-raw">
+                            <div class="form-name">Category Name</div>
+                            <div class="form-txtfld">
+                                <input type="text" name="CategoryName" asp-for=CategoryName id="MName">
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="form-raw">
+                        <div class="form-name">Active</div>
+                        <div class="form-txtfld">
+                            <input type="checkbox" asp-for=CategoryStatus name="CategoryStatus" id="MStatus">
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                
+            </div>
+            <div class="modal-footer">
+                    <button type="submit" name="submit" class="btn btn-warning" onclick="UpdateCategory()">Update</button>
+                    <button type="button" name="close" onclick="HideModalPopUp()" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        GetData();
+        $('#myForm').submit(function(event){
+
+            event.preventDefault();
+            $.ajax({
+                url:'/Home/AddCategory',
+                type:'POST',
+                data:$(this).serialize(),
+                timeout: 0,
+                success:function(response){
+                    GetData();
+                    alert("Category Added Successfully!")
+                    Resetform();
+                },
+                error:function(){
+                    alert("Error Submitting data");
+                    Resetform();
+                    GetData();
+                }
+            });
+        });
+
+
+
+       
+
+    });
+    function btnEdit(id) {
+        $.ajax({
+
+            url: '/Home/EditCategory?id=' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                $('#exampleModalCenter').modal('show');
+                $('#MId').val(response.categoryId);
+                $('#MName').val(response.categoryName);
+                //$('#MStatus').val(response.categoryStatus);
+                if(response.categoryStatus=="Active")
+                {
+                    $("#MStatus").attr("checked", true);
+                }
+                else
+                {
+                    $('#MStatus').attr("checked", false);
+                }
+            },
+            error: function(){
+                alert("Record Not found !");
+               
+                
+            }
+        })
+    }
+
+    function btnDelete(id)
+    {
+        $.ajax({
+            url:'/Home/DeleteCategory?id='+id,
+            success:function(response)
+            {
+                if (response.success==true)
+                {
+               alert("Data Deleted Successfully!");
+                GetData();
+                Resetform();
+                }
+                else
+                {
+                        alert("Category ID Already in use. Unable to Delete Record ! ");
+                Resetform();
+                }
+                
+            }
+            //error: function () {
+            //   alert("Category ID Already in use. Unable to Delete Record ! ");
+            //    Resetform();
+            //}
+    });
+
+    }
+    function UpdateCategory()
+    {
+        $('#EditForm').submit(function (event) {
+
+            event.preventDefault();
+            $.ajax({
+                url: '/Home/UpdateCategory',
+                type: 'POST',
+                data: $(this).serialize(),
+                timeout: 0,
+                success: function (response) {
+                    alert("Record Updated !");
+                    HideModalPopUp();
+                    GetData();
+                    Resetform();
+                    
+                    
+
+                },
+                error: function () {
+                    alert("Error Submitting data");
+                    
+                    Resetform();
+                    
+                    GetData();
+                }
+            });
+        });
+    }
+    function GetData(){
+           var html='';
+           $.ajax({
+               
+               url:'/Home/GetAllCategory',
+                type: 'GET',
+                dataType:'json',
+                timeout:0,
+               success:function(response){
+                   var sr=1;
+                   $.each(response, function(key,item){
+                    html += '<tr><td>' + sr + '</td><td>' + item.categoryName + '</td><td>' + item.categoryStatus + '</td><td><a class="btn btn-lg" onClick="btnEdit(' + item.categoryId + ')" ><i class="bi bi-pencil-square"></i></a></td><td><a class="btn btn-lg" onClick="btnDelete(' + item.categoryId + ')"  ><i class="bi bi-archive"></i></a></td></tr>'
+                   sr++;
+                   });
+                   $('#ListData').empty();
+                   $("#ListData").append(html);
+               }
+           });   
+       }
+
+    
+    function HideModalPopUp()
+    {
+        $('#exampleModalCenter').modal('hide');
+    }
+
+
+    function Resetform()
+    {
+        document.getElementById("myForm").reset();
+        document.getElementById("EditForm").reset();
+        //$('#MStatus').attr("checked", false);
+        //$('#Status').attr("checked", false);
+    }
+</script>
